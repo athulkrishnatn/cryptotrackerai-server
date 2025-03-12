@@ -20,34 +20,20 @@ connectDB();
 
 const app = express();
 
-// Allowed Origins (Include Localhost and Netlify)
-const allowedOrigins = [
-  "http://localhost:5174",  // Local development
-  "https://crypto-tracker-ai.netlify.app" // Netlify frontend
-];
-
-// CORS Configuration
+// Enable CORS for all origins
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // Allow cookies and authorization headers
+    origin: "*", // Allow all origins
+    methods: "GET, POST, PUT, DELETE, OPTIONS",
+    allowedHeaders: "Content-Type, Authorization",
   })
 );
 
-// Handle Preflight Requests (Fix CORS Issues)
+// Handle Preflight Requests
 app.use((req, res, next) => {
-  if (allowedOrigins.includes(req.headers.origin)) {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
